@@ -1,5 +1,7 @@
 # comp6771
-Novel image compression–encryption hybrid algorithm based on key-controlled measurement matrix in compressive sensing
+
+## Introduction
+Project implementing the paper titled _Novel image compression–encryption hybrid algorithm based on key-controlled measurement matrix in compressive sensing_ by Nanrun Zhou, Aidi Zhang, Fen Zheng, and Lihua Gong.
 
 
 ## Set-up
@@ -16,8 +18,8 @@ I suggest installing using Anaconda. First, [download](https://conda.io/minicond
 
 Then, in command line, run the following:
 
-`conda create -n py36 python=3.6`
+`conda create -n py37 python=3.7`
 
-`activate py36`
+`activate py37`
 
 `conda install numpy scipy matplotlib opencv`
