@@ -13,3 +13,11 @@ The following is required to run the project.
 - opencv
 
 I suggest installing using Anaconda. First, [download](https://conda.io/miniconda.html) Anaconda and install it.
+
+Then, in command line, run the following:
+
+`conda create -n py36 python=3.6`
+
+`activate py36`
+
+`conda install numpy scipy matplotlib opencv`
