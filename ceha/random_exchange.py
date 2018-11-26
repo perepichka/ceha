@@ -6,9 +6,9 @@ import math
 
 ##Generate a random matrix of given sizes,
 ##pixel values are uniformly distributed in range [0,1)
-def R_matrix(num_rows, num_cols):
-	return np.random.rand(num_rows, num_cols)
-
+def R_matrix(phi_matrix, lamb):
+	return phi_matrix/lamb
+	
 """
 random pixel exchange between 2 blocks
 b1, b2 are two blocks of matrix
@@ -50,7 +50,8 @@ def rand_pixel_exchange(b1, b2, R):
 
 
 if __name__ == '__main__':
-	R = R_matrix(4,4)
+	phi_matrix = np.random.rand(4,4)
+	R = R_matrix(phi_matrix, 2)
 	print("Random Matrix R")
 	print(R)
 	A = np.random.rand(4, 4)
