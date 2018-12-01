@@ -14,43 +14,41 @@ import math
 def R_matrix(phi_matrix, lamb):
 	return phi_matrix/lamb
 	
-"""
-random pixel exchange between 2 blocks
-b1, b2 are two blocks of matrix
-R is a random matrix
-Output: 2 blocks of matrix after pixel exchange
-"""
-def rand_pixel_exchange(b1, b2, R):
-    R_width, R_height = R.shape[:2]
+def rand_pixel_exchange(block1, block2, R, mode):
+    """Random pixel exchange between 2 blocks.
 
-    #calculate sum of all values in R
-    sum = 0
-    for m in range(0, R_height - 1):
-    for n in range(0, R_width - 1):
-    sum = sum + R[m][n]
+    :param block1: First block of pixels.
+    :param block2: Second block of pixels.
+    :param R: Random matrix.
 
-    R_bar = 1/(R_width*R_height)*sum
+    """
 
-    for m in range(0, len(b1) - 1):
-        for n in range(0, len(b1[0]) - 1):
-            #since the range of m and n in the paper starts from 1,
-            #the following formula is a bit different from the one in the paper
-            new_m = 1 + int(round((R_height - 2) * math.sin(math.pi * R[m][n])))
-            new_n = 1 + int(round((R_width - 2) * R[m][n]))
-            if R[m][n] > R_bar:
-                temp = b1[new_m][new_n]
-                b1[new_m][new_n] = b2[m][n]
-                b2[m][n] = temp
-                temp = b2[new_m][new_n]
-                b2[new_m][new_n] = b1[m][n]
-                b1[m][n] = temp
+    R_height, R_width = R.shape[:2]
+
+    b1 = block1.copy()
+    b2 = block2.copy()
+
+    R_bar = R.mean()
+
+    if mode == 'encrypt':
+        range1 = range(R_height)
+        range2 = range(R_width)
+    elif mode == 'decrypt':
+        range1 = list(reversed(range(R_height)))
+        range2 = list(reversed(range(R_width)))
+    else:
+        raise Exception('Unkown mode type {}'.format(mode))
+
+    for m in range1:
+        for n in range2:
+            new_m = int(round((R_height - 1) * math.sin(math.pi * R[m,n])))
+            new_n = int(round((R_width - 1) * R[m,n]))
+            if R[m,n] > R_bar:
+                b1[new_m,new_n], b2[m,n] = b2[m,n], b1[new_m,new_n]
+                b1[m,n], b2[new_m,new_n] = b2[new_m,new_n], b1[m,n]
             else:
-                temp = b1[new_m][new_n]
-                b1[new_m][new_n] = b1[m][n]
-                b1[m][n] = temp
-                temp = b2[new_m][new_n]
-                b2[new_m][new_n] = b2[m][n]
-                b2[m][n] = temp
+                b1[new_m,new_n], b1[m,n] = b1[m,n], b1[new_m,new_n]
+                b2[new_m,new_n], b2[m,n] = b2[m,n], b2[new_m,new_n]
     return (b1, b2)
 
 

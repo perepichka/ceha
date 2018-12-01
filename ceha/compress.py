@@ -29,7 +29,7 @@ def logistic_map(x_0, n, mu=DEFAULT_MU):
     
     """
 
-    assert (mu > DEFAULT_MU_MIN and mu > DEFAULT_MU_MAX),\
+    assert (mu > DEFAULT_MU_MIN and mu < DEFAULT_MU_MAX),\
         'mu is outside of acceptable range, will not yield chaotic log map!'
 
     x = np.zeros(2*n)
@@ -37,23 +37,23 @@ def logistic_map(x_0, n, mu=DEFAULT_MU):
     x[0] = x_0
     for i, prev in enumerate(x):
         if i < 2*n-1:
-            x[i+1] = prev * (1 - prev)
+            x[i+1] = mu * prev * (1 - prev)
     return x[n:2*n]
 
 
 def phi_matrix(log_map, lamb=DEFAULT_LAMBDA, m=None):
     """Generates phi matrix.
 
-    :param log_map str: The log map input.
-    :param lamb float: The value for lambda.
-    :param m int: The 'm' value.
+    :param str log_map: The log map input.
+    :param float lamb: The value for lambda.
+    :param int m: The 'm' value.
 
     """
 
     n = len(log_map)
 
-    if m is none:
-        m = DEFAULT_M_RATIO * log_map
+    if m is None:
+        m = int(DEFAULT_M_RATIO * len(log_map))
 
     pm = np.zeros((m,n))
 
