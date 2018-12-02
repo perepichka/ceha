@@ -18,10 +18,6 @@ DEFAULT_MU = 3.99
 
 DEFAULT_LAMBDA = 2
 DEFAULT_M_RATIO = 3/4
-#DEFAULT_M_RATIO = 3/4
-#DEFAULT_M_RATIO = 1/4
-#DEFAULT_M_RATIO = 14/16
-#DEFAULT_M_RATIO = 14/16
 
 
 def logistic_map(x_0, n, mu=DEFAULT_MU):
@@ -46,7 +42,7 @@ def logistic_map(x_0, n, mu=DEFAULT_MU):
     return x[n:m*n]
 
 
-def phi_matrix(log_map, lamb=DEFAULT_LAMBDA, m=None):
+def phi_matrix(log_map, lamb=DEFAULT_LAMBDA, m_ratio=None):
     """Generates phi matrix.
 
     :param str log_map: The log map input.
@@ -57,8 +53,10 @@ def phi_matrix(log_map, lamb=DEFAULT_LAMBDA, m=None):
 
     n = len(log_map)
 
-    if m is None:
+    if m_ratio is None:
         m = int(DEFAULT_M_RATIO * n)
+    else:
+        m = int(m_ratio * n)
 
     pm = np.zeros((m,n))
 
@@ -66,39 +64,7 @@ def phi_matrix(log_map, lamb=DEFAULT_LAMBDA, m=None):
     for i in range(1,m):
         pm[i,0] = pm[i-1,-1] * lamb
         pm[i,1:] = pm[i-1,0:-1]
-        #pm[i,0] = pm[i-1,n-1] * lamb
-        #pm[i,1:n] = pm[i-1,0:n-1]
     return pm
-
-#def phi_matrix(x_0, n, lamb=DEFAULT_LAMBDA, m=None):
-#    """Generates phi matrix.
-#
-#    :param str log_map: The log map input.
-#    :param float lamb: The value for lambda.
-#    :param int m: The 'm' value.
-#
-#    """
-#    if m is None:
-#        m = int(DEFAULT_M_RATIO * n)
-#
-#    log_map = logistic_map(x_0, n).reshape(m,n)
-#
-#    pm = np.zeros((m,n))
-#
-#    pm[0,:] = log_map[0,:]
-#    for i in range(1,m):
-#        pm[i,0] = log_map[i-1,-1] * lamb
-#        pm[i,1:] = log_map[i-1,0:-1]
-#        #pm[i,0] = pm[i-1,n-1] * lamb
-#        #pm[i,1:n] = pm[i-1,0:n-1]
-#    return pm
-
-def compress(x):
-    pass
-
-def decompress(x):
-    # @TODO add L0 stuff here
-    pass
 
 
 if __name__ == '__main__':
