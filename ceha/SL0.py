@@ -178,8 +178,9 @@ def SL0(A, x, sigma_min, sigma_decrease_factor=0.5, mu_0=2, L=3, A_pinv=None, tr
       
       if ShowProgress:
           #fprintf('     sigma=#f, SNR=#f\n',sigma,estimate_SNR(s,true_s))
-          string = '     sigma=%f, SNR=%f\n' % sigma,estimate_SNR(s,true_s)
-          print(string)
+          #string = '     sigma=%f, SNR=%f\n' % sigma,estimate_SNR(s,true_s)
+          #print(string)
+          print('     sigma={}, SNR={}\n'.format(sigma, estimate_SNR(s, true_s)))
       
       sigma = sigma * sigma_decrease_factor
   

@@ -18,6 +18,10 @@ DEFAULT_MU = 3.99
 
 DEFAULT_LAMBDA = 2
 DEFAULT_M_RATIO = 3/4
+#DEFAULT_M_RATIO = 3/4
+#DEFAULT_M_RATIO = 1/4
+#DEFAULT_M_RATIO = 14/16
+#DEFAULT_M_RATIO = 14/16
 
 
 def logistic_map(x_0, n, mu=DEFAULT_MU):
@@ -32,13 +36,14 @@ def logistic_map(x_0, n, mu=DEFAULT_MU):
     assert (mu > DEFAULT_MU_MIN and mu < DEFAULT_MU_MAX),\
         'mu is outside of acceptable range, will not yield chaotic log map!'
 
-    x = np.zeros(2*n)
+    m = 2# int(DEFAULT_M_RATIO * n)+1
+    x = np.zeros(m*n)
 
     x[0] = x_0
     for i, prev in enumerate(x):
-        if i < 2*n-1:
-            x[i+1] = mu * prev * (1 - prev)
-    return x[n:2*n]
+        if i < m*n-1:
+            x[i+1] = mu * prev * (1.0 - prev)
+    return x[n:m*n]
 
 
 def phi_matrix(log_map, lamb=DEFAULT_LAMBDA, m=None):
@@ -53,15 +58,40 @@ def phi_matrix(log_map, lamb=DEFAULT_LAMBDA, m=None):
     n = len(log_map)
 
     if m is None:
-        m = int(DEFAULT_M_RATIO * len(log_map))
+        m = int(DEFAULT_M_RATIO * n)
 
     pm = np.zeros((m,n))
 
     pm[0,:] = log_map
     for i in range(1,m):
-        pm[i,0] = pm[i-1,n-1] * lamb
-        pm[i,1:n] = pm[i-1,0:n-1]
+        pm[i,0] = pm[i-1,-1] * lamb
+        pm[i,1:] = pm[i-1,0:-1]
+        #pm[i,0] = pm[i-1,n-1] * lamb
+        #pm[i,1:n] = pm[i-1,0:n-1]
     return pm
+
+#def phi_matrix(x_0, n, lamb=DEFAULT_LAMBDA, m=None):
+#    """Generates phi matrix.
+#
+#    :param str log_map: The log map input.
+#    :param float lamb: The value for lambda.
+#    :param int m: The 'm' value.
+#
+#    """
+#    if m is None:
+#        m = int(DEFAULT_M_RATIO * n)
+#
+#    log_map = logistic_map(x_0, n).reshape(m,n)
+#
+#    pm = np.zeros((m,n))
+#
+#    pm[0,:] = log_map[0,:]
+#    for i in range(1,m):
+#        pm[i,0] = log_map[i-1,-1] * lamb
+#        pm[i,1:] = log_map[i-1,0:-1]
+#        #pm[i,0] = pm[i-1,n-1] * lamb
+#        #pm[i,1:n] = pm[i-1,0:n-1]
+#    return pm
 
 def compress(x):
     pass
