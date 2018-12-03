@@ -88,6 +88,7 @@ def compress(img, x_01, x_02, mu, lamb, m_ratio, display, method, output):
 
     c_name = os.path.splitext(os.path.basename(output))[0]
     c_file = output.replace(c_name, c_name + '_compressed')
+    logging.info('Saving compressed file: {}'.format(c_file))
     cv2.imwrite(c_file, c_combine.astype(np.uint8))
 
     #Step 3: pixel exchange
@@ -108,6 +109,7 @@ def compress(img, x_01, x_02, mu, lamb, m_ratio, display, method, output):
 
     e_name = os.path.splitext(os.path.basename(output))[0]
     e_file = output.replace(e_name, e_name + '_encrypted')
+    logging.info('Saving encrypted file: {}'.format(e_file))
     cv2.imwrite(e_file, encrypted.astype(np.uint8))
 
     return encrypted
@@ -173,6 +175,7 @@ def decompress(img, x_01, x_02, mu, lamb, m_ratio, display, method, output):
 
     f_name = os.path.splitext(os.path.basename(output))[0]
     f_file = output.replace(f_name, f_name + '_decompressed')
+    logging.info('Saving decompressed file: {}'.format(f_file))
     cv2.imwrite(f_file,final.astype(np.uint8))
 
     if display:
@@ -254,6 +257,8 @@ if __name__ == '__main__':
     
     # Reads the image
     img = cv2.imread(args.input, cv2.IMREAD_GRAYSCALE)
+    logging.info('Mode(s): {}'.format(str([m for m in mode])))
+    logging.info('Loading file: {}'.format(args.input))
 
     if display:
         cv2.imshow('image orig', img.astype(np.uint8))
