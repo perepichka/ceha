@@ -4,6 +4,7 @@ by the paper.
 
 """
 
+import os
 import argparse
 import cv2
 import sys
@@ -47,7 +48,7 @@ DEFAULT_HYPERPARAMS = {
 
 DEFAULT_METHOD = 'circulant'
 
-def compress(img, x_01, x_02, mu, lamb, m_ratio, display, method):
+def compress(img, x_01, x_02, mu, lamb, m_ratio, display, method, output):
 
     img_width, img_height = img.shape[:2]
 
@@ -82,6 +83,13 @@ def compress(img, x_01, x_02, mu, lamb, m_ratio, display, method):
     c2 = phi2.dot(cv2.dct(b2))
     c4 = phi2.dot(cv2.dct(b4))
 
+    # saves compressed
+    c_combine = np.block([[c1, c4], [c2, c3]])
+
+    c_name = os.path.splitext(os.path.basename(output))[0]
+    c_file = output.replace(c_name, c_name + '_compressed')
+    cv2.imwrite(c_file, c_combine.astype(np.uint8))
+
     #Step 3: pixel exchange
     r1 = R_matrix(phi1, lamb)
     r2 = R_matrix(phi2, lamb)
@@ -98,9 +106,13 @@ def compress(img, x_01, x_02, mu, lamb, m_ratio, display, method):
         cv2.imshow('image encrypted', encrypted.astype(np.uint8))
         cv2.waitKey(0)
 
+    e_name = os.path.splitext(os.path.basename(output))[0]
+    e_file = output.replace(e_name, e_name + '_encrypted')
+    cv2.imwrite(e_file, encrypted.astype(np.uint8))
+
     return encrypted
 
-def decompress(img, x_01, x_02, mu, lamb, m_ratio, display, method):
+def decompress(img, x_01, x_02, mu, lamb, m_ratio, display, method, output):
 
 
     img_width, img_height = img.shape[1], img.shape[1]
@@ -159,9 +171,15 @@ def decompress(img, x_01, x_02, mu, lamb, m_ratio, display, method):
     final[final>255] = 255
     final[final<0] = 0
 
+    f_name = os.path.splitext(os.path.basename(output))[0]
+    f_file = output.replace(f_name, f_name + '_decompressed')
+    cv2.imwrite(f_file,final.astype(np.uint8))
+
     if display:
         cv2.imshow('image final', final.astype(np.uint8))
         cv2.waitKey(0)
+
+    return final
 
 if __name__ == '__main__':
 
@@ -229,6 +247,10 @@ if __name__ == '__main__':
     lamb = args.lamb
     display = args.display
     method = args.method
+    output = args.output
+
+    if output is None:
+        output = args.input.replace('input', 'output')
     
     # Reads the image
     img = cv2.imread(args.input, cv2.IMREAD_GRAYSCALE)
@@ -237,16 +259,28 @@ if __name__ == '__main__':
         cv2.imshow('image orig', img.astype(np.uint8))
         cv2.waitKey(0)
 
-    if 'compress' in mode:
-        res_img = compress(img, x_01, x_01, mu, lamb, m_ratio, display, method)
+    orig_img = None
 
-        # @TODO add save here
+    if 'compress' in mode:
+
+        orig_img = img.copy()
+        res_img = compress(img, x_01, x_01, mu, lamb, m_ratio, display, method, output)
+
+
         img = res_img
 
     if 'decompress' in mode:
 
-        res_img = decompress(img, x_01, x_01, mu, lamb, m_ratio, display, method)
-        # @TODO add save here
+        res_img = decompress(img, x_01, x_01, mu, lamb, m_ratio, display, method, output)
+
+        if orig_img is not None:
+            psnr_val = psnr(orig_img, res_img)
+            print(psnr_val)
+            p_name = os.path.splitext(os.path.basename(output))[0]
+            p_file = output.replace(p_name, p_name + 'psnr')
+            p_file = output.replace(os.path.splitext(os.path.basename(output))[1], '.txt')
+            with open(p_file, 'w') as f:
+                f.write(str(psnr_val))
 
 ##    img_width, img_height = img.shape[:2]
 ##
